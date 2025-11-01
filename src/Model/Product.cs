@@ -13,9 +13,13 @@ public class Product
     
     public string Category { get; set; }
     
+    public string Description { get; set; }
+    
     public int Price { get; set; }
     
     public string Url { get; set; }
+    
+    public string ImageId { get; set; }
     
     public bool Status { get; set; }
     

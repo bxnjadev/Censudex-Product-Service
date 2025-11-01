@@ -9,11 +9,14 @@
 
   <ItemGroup>
     <Protobuf Include="Protos\product.proto" GrpcServices="Server" />
+    <Protobuf Include="Protos\image.proto" GrpcServices="Server" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="CloudinaryDotNet" Version="1.27.8" />
     <PackageReference Include="Google.Protobuf" Version="3.33.0" />
     <PackageReference Include="Grpc.AspNetCore" Version="2.71.0" />
+    <PackageReference Include="Grpc.AspNetCore.Server.Reflection" Version="2.71.0" />
     <PackageReference Include="Grpc.Tools" Version="2.76.0">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
@@ -27,7 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="src\Cloudinary\" />
+    <Folder Include="src\Mapper\" />
   </ItemGroup>
 
 </Project>

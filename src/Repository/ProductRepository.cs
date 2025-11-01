@@ -14,6 +14,7 @@ public class ProductRepository(
     public Product Store(Product product)
     {
         _products.InsertOne(product);
+        return product;
     }
 
     public Product? Find(string uuid)
@@ -32,12 +33,16 @@ public class ProductRepository(
         var realUuid = new Guid(uuid);
         var filter = Builders<Product>.Filter
             .Eq(p => p.Id, realUuid);
-
+        
         var update = Builders<Product>
             .Update
             .Set(p => p.Name, product.Name)
-            .Set(p => p.Category, product.Category);
-        
+            .Set(p => p.Category, product.Category)
+            .Set(p => p.Price, product.Price)
+            .Set(p => p.Description, product.Description);
+
+        _products.UpdateOne(filter, update);
+        return product;
     }
 
     public Product? Delete(string uuid)
