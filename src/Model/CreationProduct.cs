@@ -11,4 +11,5 @@ public class CreationProduct
     public string Url { get; set; }
     
     public int Status { get; set; }
+    
 }

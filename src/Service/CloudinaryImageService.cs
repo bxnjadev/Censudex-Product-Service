@@ -1,6 +1,7 @@
 ﻿using System.Collections.Immutable;
 using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
+using Grpc.Core;
 using ImageProto;
 using Microsoft.Extensions.Options;
 
@@ -17,22 +18,13 @@ public class CloudinaryImageService(Cloudinary cloudinary) : ImageService.ImageS
     private const string Gravity = "face";
     private const string Folder = "censudex";
 
-    public async Task<UploadedImageResponse?> Upload(IFormFile formFile)
+    public override async Task<UploadedImageResponse> Upload(UploadImage request,
+        ServerCallContext serverCallContext)
     {
-        var result = new ImageUploadResult();
-        var length = formFile.Length;
-        var extension = Path.GetExtension(formFile.FileName);
-
-        if (!(MinSize <= length && length <= MaxSize) ||
-            !(extension == ".jpg" || extension == ".png"))
-        {
-            return null;
-        }
-
-        await using var stream = formFile.OpenReadStream();
+        using var stream = new MemoryStream(request.Image.ToByteArray());
         var parameters = new ImageUploadParams
         {
-            File = new FileDescription(formFile.FileName, stream),
+            File = new FileDescription("image.jpg", stream),
             Transformation = new Transformation()
                 .Width(Width)
                 .Height(Height)
@@ -45,7 +37,7 @@ public class CloudinaryImageService(Cloudinary cloudinary) : ImageService.ImageS
         return new UploadedImageResponse
         {
             Id = uploadedImage.PublicId,
-            Url = uploadedImage.Url.AbsolutePath
+            Url = uploadedImage.Url.AbsoluteUri
         };
     }
 

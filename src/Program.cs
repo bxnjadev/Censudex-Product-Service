@@ -18,6 +18,8 @@ builder.Services.AddSingleton<IProductRepository, ProductRepository>();
 var connectionString = builder.Configuration.GetValue<string>
     ("MongoDbSettings:ConnectionString");
 
+Console.WriteLine(connectionString);
+
 var databaseName = builder.Configuration.GetValue<string>
     ("MongoDbSettings:DatabaseName");
 
@@ -28,6 +30,16 @@ settings.SslSettings = new SslSettings
 };
 var mongoDbClient = new MongoClient(settings);
 var mongoDatabase = mongoDbClient.GetDatabase(databaseName);
+
+foreach (var bsonDocument in mongoDatabase.ListCollections()
+             .ToList())
+foreach (var bsonDocumentName in bsonDocument.Names)
+    Console.WriteLine(bsonDocumentName);
+{
+}
+
+{
+}
 
 builder.Services.AddSingleton<IMongoClient>(mongoDbClient);
 builder.Services.AddSingleton<IMongoDatabase>(mongoDatabase);
@@ -46,7 +58,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.MapGrpcService<ProductService>();
-app.MapGrpcService<CloudinaryImageService>();
+app.UseGrpcWeb();
+
+app.MapGrpcService<ProductService>().EnableGrpcWeb();
+app.MapGrpcService<CloudinaryImageService>().EnableGrpcWeb();
 
 app.Run();
