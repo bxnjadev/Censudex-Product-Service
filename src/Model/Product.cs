@@ -7,6 +7,7 @@ public class Product
 {
     
     [BsonId]
+    [BsonGuidRepresentation(GuidRepresentation.Standard)]
     public Guid Id { get; set; }
     
     public string Name { get; set; }

@@ -9,8 +9,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddGrpc();
 builder.Services.AddGrpcReflection();
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
 builder.Services.AddSingleton<IProductRepository, ProductRepository>();
@@ -38,8 +36,6 @@ foreach (var bsonDocumentName in bsonDocument.Names)
 {
 }
 
-{
-}
 
 builder.Services.AddSingleton<IMongoClient>(mongoDbClient);
 builder.Services.AddSingleton<IMongoDatabase>(mongoDatabase);
