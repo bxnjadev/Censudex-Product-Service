@@ -11,24 +11,24 @@ public class ProductRepository(
     private readonly IMongoCollection<Product> _products =
         mongoDatabase.GetCollection<Product>("products");
     
-    public Product Store(Product product)
+    public async Task<Product> Store(Product product)
     {
-        _products.InsertOne(product);
+        await _products.InsertOneAsync(product);
         return product;
     }
 
-    public Product? Find(string uuid)
+    public async Task<Product?> Find(string uuid)
     {
 
         var realUuid = new Guid(uuid);
         var filter = Builders<Product>.Filter
             .Eq(p => p.Id, realUuid);
 
-        return _products.Find(filter).
-            FirstOrDefault();
+
+        return await _products.Find(filter).FirstOrDefaultAsync();
     }
 
-    public Product? Edit(string uuid, Product product)
+    public async Task<Product?> Edit(string uuid, Product product)
     {
         var realUuid = new Guid(uuid);
         var filter = Builders<Product>.Filter
@@ -41,13 +41,13 @@ public class ProductRepository(
             .Set(p => p.Price, product.Price)
             .Set(p => p.Description, product.Description);
 
-        _products.UpdateOne(filter, update);
+        await _products.UpdateOneAsync(filter, update);
         return product;
     }
 
-    public Product? Delete(string uuid)
+    public async Task<Product?> Delete(string uuid)
     {
-        var user = Find(uuid);
+        var user = await Find(uuid);
         if (user == null)
         {
             return null;
@@ -62,9 +62,15 @@ public class ProductRepository(
             .Update
             .Set(p => p.Status, !user.Status);
 
-        _products.UpdateOne(filter, update);
+        await _products.UpdateOneAsync(filter, update);
         user.Status = !user.Status;
         return user;
+    }
+
+    public async Task<ICollection<Product>> All()
+    {
+        return await _products.Find(_ => true)
+            .ToListAsync();
     }
     
 }

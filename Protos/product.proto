@@ -34,6 +34,10 @@ message Product {
   string date = 8;
 }
 
+message ProductResponseList {
+  repeated ProductResponse products = 1;
+}
+
 message ProductRequest {
   string id = 1;
 }
@@ -48,11 +52,14 @@ message ProductResponse {
   string date = 7;
 }
 
+
 service ProductService {
 
   rpc Get(ProductRequest) returns (ProductResponse) {}
   rpc Store(CreationProduct) returns (ProductResponse) {}
   rpc Delete(ProductRequest) returns (ProductResponse) {}
   rpc Edit(EditProduct) returns (ProductResponse) {}  
+  rpc All(Empty) returns (ProductResponseList)  {}
   
 }
+

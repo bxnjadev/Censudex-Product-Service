@@ -6,20 +6,39 @@ public interface IProductRepository
 {
 
     /**
-     * string name,
-        string description,
-        int price,
-        int category
+     * Store a new product in the datastore
+     * retrieve the product stored
      */
     
-    public Product Store(Product product);
+    public Task<Product> Store(Product product);
 
-    public Product? Find(string uuid);
-
-    public Product? Edit(string uuid,
+    /**
+     * Find a product from her uuid
+     * retrieve the product searched
+     */
+    
+    public Task<Product?> Find(string uuid);
+    
+    /**
+     * Edit a product from her uuid
+     * retrieve the product searched 
+     */
+    
+    public Task<Product?> Edit(string uuid,
         Product product);
 
-    public Product? Delete(string uuid);
+    /**
+     * Delete a product her uuid
+     * retrieve the product deleted
+     */
+    
+    public Task<Product?> Delete(string uuid);
+
+    /**
+     * List all products and retrieve from the datastore
+     */
+    
+    public Task<ICollection<Product>> All();
 
 
 }

@@ -18,6 +18,11 @@ public class CloudinaryImageService(Cloudinary cloudinary) : ImageService.ImageS
     private const string Gravity = "face";
     private const string Folder = "censudex";
 
+    /**
+     * This is a gRPC method for upload image and
+     * retrieve the url and image id
+     */
+    
     public override async Task<UploadedImageResponse> Upload(UploadImage request,
         ServerCallContext serverCallContext)
     {
@@ -40,7 +45,11 @@ public class CloudinaryImageService(Cloudinary cloudinary) : ImageService.ImageS
             Url = uploadedImage.Url.AbsoluteUri
         };
     }
-
+    
+    /**
+     * Destroy the image from id in cloudinary
+     */
+    
     public async Task<Empty> Destroy(string id)
     {
             

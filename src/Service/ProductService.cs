@@ -9,12 +9,17 @@ public class ProductService(
     IProductRepository productRepository,
     IProductRepository repository) : ProductProto.ProductService.ProductServiceBase
 {
+    
+    /**
+     * This is a gRPC method for find a user from her uuid
+     * retrieve object ProductResponse found
+     */
 
     public async override Task<ProductResponse?> Get(ProductRequest request, ServerCallContext context)
     {
         
         var uuid = request.Id;
-        var user =  productRepository.Find(uuid);
+        var user = await productRepository.Find(uuid);
         
         if (user == null)
         {
@@ -30,6 +35,11 @@ public class ProductService(
             Price = user.Price
         };
     }
+    
+    /**
+    * This method store a new product in the datastore
+    * Retrieve the response 
+    */
 
     public async override Task<ProductResponse> Store(CreationProduct creationProduct, ServerCallContext context)
     {
@@ -46,7 +56,7 @@ public class ProductService(
             ImageId = creationProduct.ImageId
         };
 
-        repository.Store(product);
+        await repository.Store(product);
         return new ProductResponse
         {
             Id = product.Id.ToString(),
@@ -58,11 +68,16 @@ public class ProductService(
             Url = product.Url
         };
     }
-
+    
+    /**
+     * This method edit a product, the field for edit are name, description, price and category
+     * Retrieve the product edited
+     */
+    
     public async override Task<ProductResponse?> Edit(EditProduct editProduct, ServerCallContext serverCallContext)
     {
         var id = editProduct.Id;
-        var editedProduct = productRepository.Edit(id, new Product
+        var editedProduct = await productRepository.Edit(id, new Product
         {
             Name = editProduct.Name,
             Description = editProduct.Description,
@@ -86,16 +101,22 @@ public class ProductService(
             Url = editedProduct.Url
         };
     }
+    
+    /**
+     * Delete a product from her uuid
+     * Retrieve the product id
+     */
 
     public async override Task<ProductResponse?> Delete(ProductRequest request, ServerCallContext serverCallContext)
     {
         var id = request.Id;
-        var deletedProduct = productRepository.Delete(id);
+        var deletedProduct = await productRepository.Delete(id);
 
         if (deletedProduct == null)
         {
             return null;
         }
+        
         return new ProductResponse
         {
             Id = deletedProduct.Id.ToString(),
@@ -106,6 +127,34 @@ public class ProductService(
             Date = deletedProduct.Date,
             Url = deletedProduct.Url
         };
+    }
+    
+    /**
+     * List all products and retrieve
+     */
+
+    public async override Task<ProductResponseList> All(Empty empty, ServerCallContext serverCallContext)
+    {
+        var responseList = new ProductResponseList();
+        ICollection<ProductResponse> responses = new List<ProductResponse>();
+        var allElements = await productRepository.All();
+        
+        foreach (var element in allElements)
+        {
+           var products =  responseList.Products;
+           responses.Add(new ProductResponse
+           {
+               Id = element.Id.ToString(),
+               Name = element.Name,
+               Category = element.Category,
+               Description = element.Description,
+               Price = element.Price,
+               Date = element.Date,
+               Url = element.Url
+           });
+        }
+
+        return responseList;
     }
 
 }
