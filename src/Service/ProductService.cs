@@ -17,7 +17,6 @@ public class ProductService(
 
     public async override Task<ProductResponse?> Get(ProductRequest request, ServerCallContext context)
     {
-        
         var uuid = request.Id;
         var user = await productRepository.Find(uuid);
         
