@@ -18,6 +18,12 @@ public interface IProductRepository
      */
     
     public Task<Product?> Find(string uuid);
+
+    /**
+     * Find a product from her name
+     * retrieve name product searched
+     */
+    public Task<Product?> FindByName(string name);
     
     /**
      * Edit a product from her uuid

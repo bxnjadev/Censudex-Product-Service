@@ -28,21 +28,31 @@ public class ProductRepository(
         return await _products.Find(filter).FirstOrDefaultAsync();
     }
 
+    public async Task<Product?> FindByName(string name)
+    {
+        var filter = Builders<Product>.Filter
+            .Eq(p => p.Name, name);
+
+        return await _products.Find(filter).FirstOrDefaultAsync();
+    }
+
     public async Task<Product?> Edit(string uuid, Product product)
     {
         var realUuid = new Guid(uuid);
         var filter = Builders<Product>.Filter
             .Eq(p => p.Id, realUuid);
-        
+
         var update = Builders<Product>
             .Update
             .Set(p => p.Name, product.Name)
             .Set(p => p.Category, product.Category)
             .Set(p => p.Price, product.Price)
-            .Set(p => p.Description, product.Description);
+            .Set(p => p.Description, product.Description)
+            .Set(p => p.ImageId, product.ImageId)
+            .Set(p => p.Url, product.Url);
 
         await _products.UpdateOneAsync(filter, update);
-        return product;
+        return await Find(uuid);
     }
 
     public async Task<Product?> Delete(string uuid)
