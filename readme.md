@@ -59,4 +59,4 @@ dotnet run
 
 
 ## Consultas disponibles
-Se encuentran en el archivo Auth-Service.postman_collection.json
+Se encuentran en el archivo postman_collection.json
