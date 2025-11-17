@@ -1,8 +1,49 @@
+using System.Security.Authentication;
+using Censudex_Product_Service.Repository;
+using Censudex_Product_Service.Service;
+using CloudinaryDotNet;
+using MongoDB.Driver;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+builder.Services.AddGrpc();
+builder.Services.AddGrpcReflection();
+
 builder.Services.AddOpenApi();
+
+builder.Services.AddSingleton<IProductRepository, ProductRepository>();
+
+var connectionString = builder.Configuration.GetValue<string>
+    ("MongoDbSettings:ConnectionString");
+
+Console.WriteLine(connectionString);
+
+var databaseName = builder.Configuration.GetValue<string>
+    ("MongoDbSettings:DatabaseName");
+
+var settings = MongoClientSettings.FromUrl(new MongoUrl(connectionString));
+settings.SslSettings = new SslSettings
+{
+    EnabledSslProtocols = SslProtocols.Tls12
+};
+var mongoDbClient = new MongoClient(settings);
+var mongoDatabase = mongoDbClient.GetDatabase(databaseName);
+
+foreach (var bsonDocument in mongoDatabase.ListCollections()
+             .ToList())
+foreach (var bsonDocumentName in bsonDocument.Names)
+    Console.WriteLine(bsonDocumentName);
+{
+}
+
+
+builder.Services.AddSingleton<IMongoClient>(mongoDbClient);
+builder.Services.AddSingleton<IMongoDatabase>(mongoDatabase);
+
+var cloudinaryUrl = builder.Configuration.GetValue<string>("Cloudinary:Url");
+var cloudinary = new Cloudinary(cloudinaryUrl);
+
+builder.Services.AddSingleton<Cloudinary>(cloudinary);
 
 var app = builder.Build();
 
@@ -12,3 +53,10 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseGrpcWeb();
+
+app.MapGrpcService<ProductService>().EnableGrpcWeb();
+app.MapGrpcService<CloudinaryImageService>().EnableGrpcWeb();
+
+app.Run();
