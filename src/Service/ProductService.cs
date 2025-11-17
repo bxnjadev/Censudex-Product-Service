@@ -112,7 +112,6 @@ public class ProductService(
 
         if (editProduct.ImageId != "")
         {
-            Console.WriteLine("Actualizando la información de la imagen eeee");
             searchedProduct.ImageId = editProduct.ImageId;
             searchedProduct.Url = editProduct.Url;
         }
